@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usermanagement-redis
+  labels:
+    app: usermanagement-redis
+spec:
+  selector:
+    matchLabels:
+      app: usermanagement-redis
+      tier: backend
+      role: cache
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: usermanagement-redis
+        tier: backend
+        role: cache
+    spec:
+      containers:
+      - name: usermanagement-redis
+        image: usermanagement-redis:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: usermanagement-redis-data
+          mountPath: /data/app/redis
+      volumes:
+      - name: usermanagement-redis-data
+        persistentVolumeClaim:
+          claimName: redis-pvc

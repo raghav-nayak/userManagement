@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usermanagement
+  labels:
+    app: usermanagement
+spec:
+  selector:
+    matchLabels:
+      app: usermanagement
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: usermanagement
+        tier: backend
+    spec:
+      containers:
+      - name: usermanagement
+        image: usermanagement:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        # startupProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 8080
+        #   failureThreshold: 30
+        #   periodSeconds: 10
+        # livenessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 8080
+        #   periodSeconds: 30
+        # readinessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 80
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 5
+        env:
+        - name: REDIS_HOST
+          valueFrom:
+            secretKeyRef:
+              name: usermanagement-redis-secret
+              key: REDIS_HOST
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: usermanagement-redis-secret
+              key: REDIS_PASSWORD
